@@ -1,0 +1,118 @@
+<h2>Risk Management</h2>
+
+<!-- Exposure cards -->
+<div class="stats-row">
+  <mat-card class="stat-card">
+    <mat-card-content>
+      <div class="stat-value">{{ exposure.openTrades }}</div>
+      <div class="stat-label">Open Trades</div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="stat-card">
+    <mat-card-content>
+      <div class="stat-value danger">{{ exposure.dailyLoss | number:'1.2-2' }}$</div>
+      <div class="stat-label">Daily Loss</div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="stat-card" [class.emergency]="exposure.isEmergencyStop">
+    <mat-card-content>
+      <div class="stat-value">{{ exposure.isEmergencyStop ? '🔴 EMERGENCY STOP' : '🟢 Active' }}</div>
+      <div class="stat-label">Trading Status</div>
+      <button *ngIf="exposure.isEmergencyStop"
+              mat-raised-button color="warn"
+              (click)="clearEmergencyStop()">
+        Clear Stop
+      </button>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<!-- Symbol configs -->
+<mat-card class="mt-16">
+  <mat-card-header><mat-card-title>Symbol Risk Configurations</mat-card-title></mat-card-header>
+  <mat-card-content>
+    <div class="config-buttons">
+      <button mat-stroked-button
+              *ngFor="let c of symbolConfigs"
+              (click)="selectConfig(c)"
+              [color]="selectedConfig?.symbolId === c.symbolId ? 'primary' : ''">
+        {{ c.symbolId }}
+      </button>
+    </div>
+
+    <form [formGroup]="form" *ngIf="selectedConfig" class="risk-form">
+      <mat-form-field>
+        <mat-label>Max Risk Per Trade (%)</mat-label>
+        <input matInput type="number" formControlName="maxRiskPerTrade">
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Max Daily Loss (%)</mat-label>
+        <input matInput type="number" formControlName="maxDailyLoss">
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Max Spread Allowed</mat-label>
+        <input matInput type="number" formControlName="maxSpreadAllowed">
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Max Slippage Allowed</mat-label>
+        <input matInput type="number" formControlName="maxSlippageAllowed">
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Max Concurrent Trades</mat-label>
+        <input matInput type="number" formControlName="maxConcurrentTrades">
+      </mat-form-field>
+
+      <div class="toggle-row">
+        <mat-slide-toggle formControlName="autoTradingEnabled">Auto Trading</mat-slide-toggle>
+      </div>
+
+      <button mat-raised-button color="primary"
+              [disabled]="form.invalid" (click)="saveConfig()">
+        Save Configuration
+      </button>
+    </form>
+  </mat-card-content>
+</mat-card>
+
+<!-- Risk Events -->
+<mat-card class="mt-16">
+  <mat-card-header><mat-card-title>Risk Events</mat-card-title></mat-card-header>
+  <mat-card-content>
+    <table mat-table [dataSource]="riskEvents" class="full-width">
+      <ng-container matColumnDef="eventType">
+        <th mat-header-cell *matHeaderCellDef>Event</th>
+        <td mat-cell *matCellDef="let e">{{ e.eventType }}</td>
+      </ng-container>
+      <ng-container matColumnDef="severity">
+        <th mat-header-cell *matHeaderCellDef>Severity</th>
+        <td mat-cell *matCellDef="let e">
+          <mat-chip [color]="e.severity==='Critical'?'warn':'accent'" selected>{{ e.severity }}</mat-chip>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef>Description</th>
+        <td mat-cell *matCellDef="let e">{{ e.description }}</td>
+      </ng-container>
+      <ng-container matColumnDef="current">
+        <th mat-header-cell *matHeaderCellDef>Current</th>
+        <td mat-cell *matCellDef="let e">{{ e.currentValue | number:'1.2-2' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="threshold">
+        <th mat-header-cell *matHeaderCellDef>Threshold</th>
+        <td mat-cell *matCellDef="let e">{{ e.thresholdValue | number:'1.2-2' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="triggeredAt">
+        <th mat-header-cell *matHeaderCellDef>Time</th>
+        <td mat-cell *matCellDef="let e">{{ e.triggeredAt | date:'HH:mm:ss' }}</td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="eventColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: eventColumns;"></tr>
+    </table>
+  </mat-card-content>
+</mat-card>
