@@ -1,0 +1,132 @@
+<mat-sidenav-container class="shell-container">
+
+  <!-- ── Sidenav ─────────────────────────────────── -->
+  <mat-sidenav mode="side" opened class="sidenav">
+
+    <!-- Brand -->
+    <div class="brand">
+      <div class="brand-logo">
+        <div class="brand-icon">
+          <mat-icon>bolt</mat-icon>
+        </div>
+        <span class="brand-name">ARABAZON</span>
+      </div>
+      <div class="brand-sub">Trade AI v1.0</div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-list">
+      <div class="nav-section-label">Overview</div>
+
+      <a class="nav-item" routerLink="/dashboard" routerLinkActive="active-link">
+        <mat-icon>grid_view</mat-icon>
+        <span class="nav-label">Dashboard</span>
+      </a>
+
+      <a class="nav-item" routerLink="/market" routerLinkActive="active-link">
+        <mat-icon>show_chart</mat-icon>
+        <span class="nav-label">Market</span>
+        <span class="nav-indicator"></span>
+      </a>
+
+      <div class="nav-section-label">Trading</div>
+
+      <a class="nav-item" routerLink="/signals" routerLinkActive="active-link">
+        <mat-icon>notifications_active</mat-icon>
+        <span class="nav-label">Signals</span>
+      </a>
+
+      <a class="nav-item" routerLink="/trades" routerLinkActive="active-link">
+        <mat-icon>swap_horiz</mat-icon>
+        <span class="nav-label">Trades</span>
+      </a>
+
+      <div class="nav-section-label">Control</div>
+
+      <a class="nav-item" routerLink="/risk" routerLinkActive="active-link">
+        <mat-icon>security</mat-icon>
+        <span class="nav-label">Risk</span>
+      </a>
+
+      <a class="nav-item" routerLink="/backtesting" routerLinkActive="active-link">
+        <mat-icon>history</mat-icon>
+        <span class="nav-label">Backtesting</span>
+      </a>
+
+      <a class="nav-item" routerLink="/system" routerLinkActive="active-link">
+        <mat-icon>monitor_heart</mat-icon>
+        <span class="nav-label">System</span>
+      </a>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <div class="status-dot"></div>
+      <span class="status-text">Live</span>
+      <span class="status-time">{{ currentTime | date:'HH:mm:ss' }}</span>
+    </div>
+
+  </mat-sidenav>
+
+  <!-- ── Main Content ─────────────────────────────── -->
+  <mat-sidenav-content class="main-content">
+
+    <!-- Toolbar -->
+    <mat-toolbar class="toolbar">
+      <div class="toolbar-left">
+        <div class="breadcrumb">
+          <span>ARABAZON</span>
+          <span class="sep">/</span>
+          <span class="current">{{ currentRoute }}</span>
+        </div>
+      </div>
+
+      <!-- Live Ticker -->
+      <div class="ticker-strip" *ngIf="ticks['EURUSD'] || ticks['GBPUSD']">
+        <div class="ticker-item" *ngIf="ticks['EURUSD']">
+          <span class="ticker-symbol">EURUSD</span>
+          <span class="ticker-price">{{ ticks['EURUSD']?.bid | number:'1.5-5' }}</span>
+        </div>
+        <div class="ticker-item" *ngIf="ticks['GBPUSD']">
+          <span class="ticker-symbol">GBPUSD</span>
+          <span class="ticker-price">{{ ticks['GBPUSD']?.bid | number:'1.5-5' }}</span>
+        </div>
+      </div>
+
+      <span class="spacer"></span>
+
+      <div class="toolbar-actions">
+        <button mat-icon-button [matMenuTriggerFor]="notifMenu" (click)="clearNotifications()">
+          <mat-icon
+            [matBadge]="unreadCount"
+            [matBadgeHidden]="unreadCount === 0"
+            matBadgeColor="warn"
+            matBadgeSize="small">
+            notifications
+          </mat-icon>
+        </button>
+      </div>
+    </mat-toolbar>
+
+    <!-- Notification Menu -->
+    <mat-menu #notifMenu="matMenu" class="notif-menu">
+      <div class="notif-header">Notifications</div>
+      <div *ngIf="notifications.length === 0" class="notif-empty">
+        No notifications
+      </div>
+      <div *ngFor="let n of notifications.slice(0, 10)"
+           class="notif-item" mat-menu-item>
+        <div class="notif-title">{{ n.title }}</div>
+        <div class="notif-body">{{ n.message }}</div>
+        <div class="notif-time">{{ n.timestamp | date:'HH:mm:ss' }}</div>
+      </div>
+    </mat-menu>
+
+    <!-- Page Content -->
+    <div class="page-content">
+      <router-outlet></router-outlet>
+    </div>
+
+  </mat-sidenav-content>
+
+</mat-sidenav-container>

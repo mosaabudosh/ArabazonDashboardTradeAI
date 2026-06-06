@@ -1,0 +1,44 @@
+<h2>System Status</h2>
+
+<mat-card>
+  <mat-card-header><mat-card-title>Health Check</mat-card-title></mat-card-header>
+  <mat-card-content>
+    <div class="health-row">
+      <span>API Status</span>
+      <mat-chip color="primary" selected>{{ health.status ?? 'Unknown' }}</mat-chip>
+    </div>
+    <div class="health-row">
+      <span>Version</span>
+      <span>{{ health.version ?? '—' }}</span>
+    </div>
+    <div class="health-row">
+      <span>Timestamp</span>
+      <span>{{ health.timestamp | date:'medium' }}</span>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<!-- في system-status.component.html أضف: -->
+<mat-card class="mt-16">
+  <mat-card-header><mat-card-title>AI Service</mat-card-title></mat-card-header>
+  <mat-card-content>
+    <div class="health-row">
+      <span>Mode</span>
+      <mat-chip [color]="aiStatus.mode==='Enabled'?'primary':aiStatus.mode==='Degraded'?'accent':'warn'" selected>
+        {{ aiStatus.mode }}
+      </mat-chip>
+    </div>
+    <div class="health-row">
+      <span>Health</span>
+      <span>{{ aiStatus.healthStatus }}</span>
+    </div>
+    <div class="health-row">
+      <span>Failures</span>
+      <span>{{ aiStatus.failureCount }}</span>
+    </div>
+    <div class="health-row">
+      <span>Response</span>
+      <span>{{ aiStatus.responseTimeMs }}ms</span>
+    </div>
+  </mat-card-content>
+</mat-card>
